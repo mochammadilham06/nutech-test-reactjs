@@ -6,3 +6,9 @@ export interface ProductResposne {
   selling_price: number;
   stock: number;
 }
+
+export interface ProductProps {
+  fetchData: () => void;
+  initialData?: ProductResposne;
+  mode?: "add" | "update";
+}

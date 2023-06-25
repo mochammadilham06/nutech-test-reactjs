@@ -1,9 +1,9 @@
+import ApiProducts from "@nutech/apis/product.api";
 import ProductCard from "@nutech/components/Card";
-import Footer from "@nutech/components/Footer";
 import Modal from "@nutech/components/Modal";
 import Navbar from "@nutech/components/Navbar";
+import Pagination from "@nutech/components/Pagination";
 import Spinner from "@nutech/components/Spinner";
-import axiosInstance from "@nutech/configs/axiosInstance";
 import useDebounce from "@nutech/utils/useDebounce";
 import { Fragment, useEffect, useState } from "react";
 import { ProductResposne } from "src/interface/product";
@@ -16,21 +16,16 @@ const HomePage = () => {
   const [search, setSearch] = useState<string>("");
   const debouncedSearchTerm = useDebounce(search, 1000);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const per_page = 9;
+  const per_page = 6;
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const { data } = await axiosInstance.get(`/products`, {
-        params: {
-          search: debouncedSearchTerm,
-          per_page: per_page,
-          page: currentPage,
-        },
-      });
-      const { products, last_page, total } = data.data;
-
+      const { products, last_page, total } = await ApiProducts.functionGetData(
+        debouncedSearchTerm,
+        per_page,
+        currentPage
+      );
       setProduct(products);
       setLastPage(last_page);
       setTotalProducts(total);
@@ -42,7 +37,10 @@ const HomePage = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [currentPage, debouncedSearchTerm]);
+    if (currentPage > lastPage) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [currentPage, debouncedSearchTerm, lastPage]);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -54,10 +52,10 @@ const HomePage = () => {
   return (
     <Fragment>
       <Navbar />
-      <div className="flex gap-5 justify-end items-center me-5">
+      <div className="flex gap-5 justify-center mb-5 md:justify-end items-center me-5">
         <label htmlFor="search">Cari : </label>
         <input
-          className="w-1/4 px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+          className="w-1/2 md:w-1/4 px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
           type="text"
           id="search"
           placeholder="Search....."
@@ -82,25 +80,11 @@ const HomePage = () => {
               ))}
             </div>
           </section>
-
-          <div className="flex justify-center my-5">
-            {Array.from({ length: lastPage }, (_, index) => index + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  className={`px-3 py-2 rounded-md mx-1 ${
-                    page === currentPage
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-gray-600"
-                  }`}
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </button>
-              )
-            )}
-          </div>
-          <Footer />
+          <Pagination
+            currentPage={currentPage}
+            lastPage={lastPage}
+            handlePageChange={handlePageChange}
+          />
         </Fragment>
       ) : (
         <p className="text-center text-3xl font-bold mt-36">Tidak ada data</p>

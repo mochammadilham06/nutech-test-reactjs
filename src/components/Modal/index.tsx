@@ -7,15 +7,11 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import axiosInstance from "@nutech/configs/axiosInstance";
 import Swal from "sweetalert2";
-import { ProductResposne } from "src/interface/product";
+import { ProductProps } from "src/interface/product";
 import { PenIcons } from "@nutech/assets/index";
-interface ProductProps {
-  fetchData: () => void;
-  initialData?: ProductResposne;
-  mode?: "add" | "update";
-}
+import ApiProducts from "@nutech/apis/product.api";
+
 const Modal = ({ fetchData, mode, initialData }: ProductProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const data = {
@@ -68,10 +64,10 @@ const Modal = ({ fetchData, mode, initialData }: ProductProps) => {
     uploadTask.on("state_changed", async () => {
       try {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        if (form.images.length !== 0) {
-          const previousImageRef = ref(storage, `files/${form.images}`);
-          deleteObject(previousImageRef);
-        }
+        // if (form.images.length !== 0) {
+        //   const previousImageRef = ref(storage, `files/${form.images}`);
+        //   await deleteObject(previousImageRef);
+        // }
         setForm((prevState) => ({
           ...prevState,
           images: downloadURL,
@@ -92,7 +88,7 @@ const Modal = ({ fetchData, mode, initialData }: ProductProps) => {
           selling_price: form.selling_price,
           stock: form.stock,
         };
-        await axiosInstance.post(`/products`, REQ);
+        ApiProducts.functionStoreData(REQ);
         Swal.fire("Berhasil", "Data berhasil ditambahkan", "success").then(
           () => {
             setForm(data);
@@ -101,7 +97,7 @@ const Modal = ({ fetchData, mode, initialData }: ProductProps) => {
           }
         );
       } else if (mode === "update") {
-        await axiosInstance.put(`/products/${form.id}`, form);
+        ApiProducts.functionUpdateData(form);
         Swal.fire("Berhasil", "Data berhasil Diubah", "success").then(() => {
           setForm(data);
           setIsOpen(false);
@@ -127,25 +123,23 @@ const Modal = ({ fetchData, mode, initialData }: ProductProps) => {
       }
     }
   };
-  console.log(form);
   return (
     <Fragment>
       <div className="flex justify-center">
         {mode === "add" ? (
           <Button
             onClick={handleOpenModal}
-            className="rounded-lg bg-green-50 px-8 py-2.5 text-sm font-medium text-green-500 hover:bg-green-100 hover:text-green-600"
+            className="rounded-lg bg-green-50 w-full mx-10 md:w-1/4 py-2.5 text-sm font-medium text-green-500 hover:bg-green-100 hover:text-green-600"
           >
             Tambah
           </Button>
         ) : (
-          <button
-            type="button"
+          <Button
             onClick={handleOpenModal}
             className="h-10 px-6 font-semibold rounded-full hover:bg-violet-300 text-white bg-white border border-1 border-violet-600"
           >
             <img src={PenIcons} />
-          </button>
+          </Button>
         )}
       </div>
 
@@ -158,7 +152,7 @@ const Modal = ({ fetchData, mode, initialData }: ProductProps) => {
 
           <div className="bg-white rounded-lg shadow-xl max-w-lg p-8 z-50 w-full mx-auto">
             <h1 className="text-center font-bold text-lg text-slate-800 mb-3">
-              Tambah Barang
+              {mode === "add" ? "Tambah" : "Ubah"} Barang
             </h1>
             <form onSubmit={handleSubmit} className="space-y-3 px-3 ">
               <>

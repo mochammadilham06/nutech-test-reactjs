@@ -1,10 +1,10 @@
-import { PenIcons, TrashIcons } from "@nutech/assets/index";
-import axiosInstance from "@nutech/configs/axiosInstance";
+import { TrashIcons } from "@nutech/assets/index";
 import { ProductResposne } from "src/interface/product";
 import Swal from "sweetalert2";
 import { storage } from "@nutech/configs/firebase";
 import { ref, deleteObject } from "firebase/storage";
 import Modal from "../Modal";
+import ApiProducts from "@nutech/apis/product.api";
 
 interface ProductProps {
   product: ProductResposne;
@@ -26,7 +26,7 @@ const ProductCard = ({ product, fetchData }: ProductProps) => {
         try {
           const storageRef = ref(storage, imageUrl);
           await deleteObject(storageRef);
-          axiosInstance.delete(`/products/${id}`);
+          ApiProducts.functionDeleteData(id);
           Swal.fire("Berhasil", "Data berhasil dihapus", "success").then(() => {
             fetchData();
           });
@@ -51,7 +51,7 @@ const ProductCard = ({ product, fetchData }: ProductProps) => {
           loading="lazy"
         />
       </div>
-      <form className="flex-auto p-6">
+      <div className="flex-auto p-6">
         <div className="flex flex-wrap">
           <h1 className="flex-auto font-medium text-slate-900">
             {product.name}
@@ -64,12 +64,6 @@ const ProductCard = ({ product, fetchData }: ProductProps) => {
         <div className="flex space-x-4 my-5 justify-center text-sm font-medium">
           <div className="flex justify-center space-x-4">
             <Modal mode="update" initialData={product} fetchData={fetchData} />
-            {/* <button
-              className="h-10 px-6 font-semibold rounded-full bg-violet-600 text-white hover:bg-white hover:border hover:border-1 hover:border-violet-600"
-              type="submit"
-            >
-              <img src={PenIcons} />
-            </button> */}
             <button
               onClick={() => handleDelete(product.uuid, product.images)}
               className="h-10 px-6 font-semibold rounded-full border border-red-600 text-slate-900 hover:bg-red-300"
@@ -82,7 +76,7 @@ const ProductCard = ({ product, fetchData }: ProductProps) => {
         <div className="text-sm font-medium text-slate-400">
           {product.stock} stock
         </div>
-      </form>
+      </div>
     </div>
   );
 };
