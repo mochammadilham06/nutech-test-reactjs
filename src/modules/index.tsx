@@ -49,6 +49,7 @@ const HomePage = () => {
     const { value } = e.target;
     setSearch(value);
   };
+  console.log(totalProducts);
   return (
     <Fragment>
       <Navbar />

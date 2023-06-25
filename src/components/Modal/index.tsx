@@ -1,12 +1,7 @@
 import { Fragment, useState } from "react";
 import Button from "@nutech/components/Button";
 import { storage } from "@nutech/configs/firebase";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Swal from "sweetalert2";
 import { ProductProps } from "src/interface/product";
 import { PenIcons } from "@nutech/assets/index";
