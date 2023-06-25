@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Custom paths */
+    "baseUrl": "./",
+    "paths": {
+      "@nutech/apis/*": ["src/apis/*"],
+      "@nutech/modules/*": ["src/modules/*"],
+      "@nutech/components/*": ["src/components/*"],
+      "@nutech/assets/*": ["src/assets/*"],
+      "@nutech/configs/*": ["src/configs/*"],
+      "@nutech/routes/*": ["src/routes/*"],
+      "@nutech/store/*": ["src/store/*"],
+      "@nutech/utils/*": ["src/utils/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
